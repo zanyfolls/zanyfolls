@@ -1,72 +1,456 @@
-<!DOCTYPE html>
-<html>
+
+<html lang="id">
 <head>
-<meta charset="UTF-8">
-<title>Daftar Layanan</title>
-<style>
-    body { font-family: Arial; padding: 20px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-    th, td { padding: 8px; border: 1px solid #ccc; }
-    th { background: #f2f2f2; }
-</style>
+  <meta charset="UTF-8"></meta>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"></meta>
+  <title>Pesan Layanan SMM</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"></link>
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-dark: #3a56d4;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --gray: #6c757d;
+      --border: #e0e0e0;
+      --card-bg: #ffffff;
+      --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f5f7fb;
+      color: var(--dark);
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+      padding: 16px 0;
+    }
+
+    header h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 19px;
+      margin-bottom: 16px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Platform - tetap grid ringkas */
+    .platform-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .platform-item {
+      padding: 12px 8px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .platform-item:hover {
+      border-color: var(--primary);
+      background-color: #f0f4ff;
+    }
+
+    .platform-item.active {
+      border-color: var(--primary);
+      background-color: #eef4ff;
+      font-weight: bold;
+    }
+
+    /* Scrollable container untuk kategori & layanan */
+    .scrollable-section {
+      max-height: 300px;
+      overflow-y: auto;
+      padding-right: 8px;
+      margin-top: 10px;
+    }
+
+    .scrollable-section::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .scrollable-section::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 3px;
+    }
+
+    .scrollable-section::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 3px;
+    }
+
+    .category-item, .service-item {
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .category-item:hover, .service-item:hover {
+      border-color: var(--primary);
+      background-color: #f9fbff;
+    }
+
+    .category-item.active, .service-item.active {
+      border-color: var(--primary);
+      background-color: #eef4ff;
+      font-weight: bold;
+    }
+
+    .service-item {
+      background: #fafafa;
+    }
+
+    .service-name {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .service-id {
+      font-size: 12px;
+      color: var(--gray);
+    }
+
+    /* Detail layanan */
+    .detail-card {
+      background: #f8f9fa;
+      border: 1px solid #ced4da;
+      border-radius: 8px;
+      padding: 18px;
+      margin-top: 20px;
+    }
+
+    .detail-row {
+      display: flex;
+      margin-bottom: 8px;
+    }
+
+    .detail-label {
+      width: 110px;
+      font-weight: 600;
+      color: var(--gray);
+    }
+
+    .detail-value {
+      flex: 1;
+      word-break: break-word;
+    }
+
+    .price::before {
+      content: "Rp ";
+    }
+
+    .refill-yes { color: #27ae60; font-weight: bold; }
+    .refill-no { color: #e74c3c; }
+
+    /* Form */
+    .form-group {
+      margin-top: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ced4da;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    .btn:hover {
+      background: var(--primary-dark);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Respons */
+    .response-box {
+      background: #f8f9fa;
+      padding: 16px;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      font-family: monospace;
+      max-height: 200px;
+      overflow: auto;
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
+  <div class="container">
+    <header>
+      <h1><i class="fas fa-shopping-cart"></i> Pesan Layanan SMM</h1>
+    </header>
 
-<h2>Daftar Layanan</h2>
-<p id="status">Memuat data dari server...</p>
+    <!-- Langkah 1: Pilih Platform -->
+    <div class="card">
+      <h2><i class="fas fa-layer-group"></i> 1. Pilih Platform</h2>
+      <div class="platform-grid" id="platformGrid">
+        <!-- Diisi oleh JS -->
+      </div>
+    </div>
 
-<table id="servicesTable" style="display:none">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Layanan</th>
-            <th>Kategori</th>
-            <th>Harga</th>
-            <th>Min</th>
-            <th>Max</th>
-            <th>Deskripsi</th>
-        </tr>
-    </thead>
-    <tbody></tbody>
-</table>
+    <!-- Langkah 2: Pilih Kategori (Scrollable) -->
+    <div class="card hidden" id="categorySection">
+      <h2><i class="fas fa-tag"></i> 2. Pilih Kategori</h2>
+      <div class="scrollable-section" id="categoryScroll">
+        <!-- Kategori di sini -->
+      </div>
+    </div>
 
-<script>
-const API_PROXY = "https://script.google.com/macros/s/AKfycbwQsBDGd2U4qmwAPZLfnehYi04euNP5icmCTWxaxnZ8YMMZFCFzksCYqQBT8Ah-xyZvug/exec"; // GANTI
+    <!-- Langkah 3: Pilih Layanan (Scrollable) -->
+    <div class="card hidden" id="serviceSection">
+      <h2><i class="fas fa-list"></i> 3. Pilih Layanan</h2>
+      <div class="scrollable-section" id="serviceScroll">
+        <!-- Layanan di sini -->
+      </div>
+    </div>
 
-fetch(API_PROXY, { method: "GET" })
-    .then(res => res.json())
-    .then(data => {
-        const status = document.getElementById("status");
-        const table = document.getElementById("servicesTable");
-        const tbody = table.querySelector("tbody");
+    <!-- Langkah 4: Detail & Form -->
+    <div class="card hidden" id="orderSection">
+      <h2><i class="fas fa-file-invoice"></i> 4. Detail &amp; Pesanan</h2>
+      <div id="serviceDetail"></div>
+      <div class="form-group">
+        <label for="targetInput">Target (Link/Username)</label>
+        <input class="form-control" id="targetInput" placeholder="https://..." type="text" />
+      </div>
+      <div class="form-group">
+        <label for="quantityInput">Jumlah</label>
+        <input class="form-control" id="quantityInput" min="1" type="number" />
+      </div>
+      <button class="btn" onclick="submitOrder()"><i class="fas fa-paper-plane"></i> Kirim Pesanan</button>
+    </div>
 
-        if (!data.data) {
-            status.innerText = "Gagal memuat layanan (API kosong).";
-            return;
-        }
+    <!-- Respons -->
+    <div class="card hidden" id="responseSection">
+      <h2><i class="fas fa-comment"></i> Respons Sistem</h2>
+      <pre class="response-box" id="responseBox"></pre>
+    </div>
+  </div>
 
-        status.style.display = "none";
-        table.style.display = "table";
+  <script>
+    // 🔑 GANTI DENGAN URL APPS SCRIPT ANDA
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwrD290pyDocYv4ucb2i0iiQGfK_agn_NfU1qxdM6vM9PLEckgu4tMJ0Dle4R5Bk1iafQ/exec";
 
-        data.data.forEach(srv => {
-            tbody.innerHTML += `
-                <tr>
-                    <td>${srv.id}</td>
-                    <td>${srv.name}</td>
-                    <td>${srv.category}</td>
-                    <td>${srv.price}</td>
-                    <td>${srv.min}</td>
-                    <td>${srv.max}</td>
-                    <td>${srv.description}</td>
-                </tr>
-            `;
-        });
-    })
-    .catch(err => {
-        document.getElementById("status").innerText = "Error fetch API.";
-        console.error(err);
+    const PLATFORMS = [
+      "Instagram", "Tiktok", "Youtube", "Twitter/X", "Facebook", "Threads",
+      "Telegram", "Whatsapp", "Marketplace", "Discord", "Twitch",
+      "Pinterest", "Snack Video", "TripAdvisor"
+    ];
+
+    let allServices = [];
+    let selectedService = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderPlatforms();
+      loadServicesFromAPI();
     });
-</script>
 
+    function renderPlatforms() {
+      const container = document.getElementById('platformGrid');
+      container.innerHTML = PLATFORMS.map(p => 
+        `<div class="platform-item" onclick="selectPlatform('${p}')">${p}</div>`
+      ).join('');
+    }
+
+    function selectPlatform(platform) {
+      document.querySelectorAll('.platform-item').forEach(el => el.classList.remove('active'));
+      event.target.classList.add('active');
+
+      const categories = [...new Set(
+        allServices
+          .filter(s => s.category.toLowerCase().includes(platform.toLowerCase()))
+          .map(s => s.category)
+      )];
+
+      const categoryContainer = document.getElementById('categoryScroll');
+      if (categories.length === 0) {
+        categoryContainer.innerHTML = '<div style="text-align:center;color:#e74c3c;padding:12px;">Tidak ada kategori</div>';
+      } else {
+        categoryContainer.innerHTML = categories.map(cat => 
+          `<div class="category-item" onclick="selectCategory('${cat.replace(/'/g, "\\'")}')">${cat}</div>`
+        ).join('');
+      }
+
+      document.getElementById('categorySection').classList.remove('hidden');
+      document.getElementById('serviceSection').classList.add('hidden');
+      document.getElementById('orderSection').classList.add('hidden');
+    }
+
+    function selectCategory(category) {
+      document.querySelectorAll('.category-item').forEach(el => el.classList.remove('active'));
+      event.target.classList.add('active');
+
+      const services = allServices.filter(s => s.category === category);
+      const serviceContainer = document.getElementById('serviceScroll');
+
+      if (services.length === 0) {
+        serviceContainer.innerHTML = '<div style="text-align:center;color:#e74c3c;padding:12px;">Tidak ada layanan</div>';
+      } else {
+        serviceContainer.innerHTML = services.map(s => 
+          `<div class="service-item" onclick="selectService(${s.id})">
+            <div class="service-name">${s.name}</div>
+            <div class="service-id">ID: ${s.id} • Rp ${s.price}/1K</div>
+          </div>`
+        ).join('');
+      }
+
+      document.getElementById('serviceSection').classList.remove('hidden');
+    }
+
+    function selectService(serviceId) {
+      selectedService = allServices.find(s => s.id == serviceId);
+      if (!selectedService) return;
+
+      const maxText = selectedService.max >= 999999999 ? 'Unlimited' : selectedService.max.toLocaleString('id');
+      const refillText = selectedService.refill ? 
+        '<span class="refill-yes">✓ Bisa Refill</span>' : 
+        '<span class="refill-no">✗ Tidak Bisa Refill</span>';
+
+      document.getElementById('serviceDetail').innerHTML = `
+        <div class="detail-card">
+          <div class="detail-row">
+            <div class="detail-label">Nama:</div>
+            <div class="detail-value">${selectedService.name}</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">ID:</div>
+            <div class="detail-value">${selectedService.id}</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Harga:</div>
+            <div class="detail-value" class="price">${selectedService.price} per 1.000</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Min/Max:</div>
+            <div class="detail-value">${selectedService.min.toLocaleString('id')} / ${maxText}</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Refill:</div>
+            <div class="detail-value">${refillText}</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Deskripsi:</div>
+            <div class="detail-value">${selectedService.description || '-'}</div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('quantityInput').min = selectedService.min;
+      document.getElementById('quantityInput').placeholder = `Min: ${selectedService.min}`;
+      document.getElementById('orderSection').classList.remove('hidden');
+    }
+
+    async function loadServicesFromAPI() {
+      try {
+        const url = new URL(WEB_APP_URL);
+        url.searchParams.set('action', 'services');
+        const res = await fetch(url);
+        const result = await res.json();
+        if (result.success && result.data && result.data.services) {
+          allServices = result.data.services;
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function submitOrder() {
+      if (!selectedService) {
+        alert('⚠️ Pilih layanan dulu!');
+        return;
+      }
+
+      const target = document.getElementById('targetInput').value.trim();
+      const quantity = document.getElementById('quantityInput').value.trim();
+      if (!target || !quantity) {
+        alert('⚠️ Lengkapi semua kolom!');
+        return;
+      }
+
+      const qty = parseInt(quantity);
+      const max = selectedService.max >= 999999999 ? Infinity : selectedService.max;
+      if (qty < selectedService.min || qty > max) {
+        alert(`⚠️ Jumlah harus antara ${selectedService.min} dan ${max === Infinity ? 'Unlimited' : max}`);
+        return;
+      }
+
+      document.getElementById('responseBox').textContent = '⏳ Mengirim pesanan...';
+      document.getElementById('responseSection').classList.remove('hidden');
+
+      try {
+        const url = new URL(WEB_APP_URL);
+        url.searchParams.set('action', 'order');
+        url.searchParams.set('service', selectedService.id);
+        url.searchParams.set('target', target);
+        url.searchParams.set('quantity', quantity);
+
+        const res = await fetch(url);
+        const data = await res.json();
+        document.getElementById('responseBox').textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        document.getElementById('responseBox').textContent = `❌ Error: ${err.message}`;
+      }
+    }
+  </script>
 </body>
 </html>
