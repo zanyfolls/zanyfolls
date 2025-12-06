@@ -1,42 +1,21 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
 <meta charset="UTF-8">
 <title>Daftar Layanan</title>
-
 <style>
-    body { 
-        font-family: Arial, sans-serif; 
-        padding: 20px; 
-        background: #f8f8f8;
-    }
-    h2 {
-        margin-bottom: 10px;
-    }
-    table { 
-        width: 100%; 
-        border-collapse: collapse; 
-        margin-top: 20px; 
-        background: white;
-    }
-    th, td { 
-        border: 1px solid #ddd; 
-        padding: 10px;
-        font-size: 14px;
-    }
-    th { 
-        background: #f2f2f2; 
-        font-weight: bold;
-    }
+    body { font-family: Arial; padding: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { padding: 8px; border: 1px solid #ccc; }
+    th { background: #f2f2f2; }
 </style>
 </head>
-
 <body>
 
 <h2>Daftar Layanan</h2>
-<p>Sedang memuat layanan...</p>
+<p id="status">Memuat data dari server...</p>
 
-<table id="servicesTable" style="display:none;">
+<table id="servicesTable" style="display:none">
     <thead>
         <tr>
             <th>ID</th>
@@ -52,52 +31,41 @@
 </table>
 
 <script>
-// EDIT DI SINI sesuai API kamu
-const API_URL = "https://smmnusantara.id/api/services";
-const API_ID = "46340";
-const API_KEY = "rnnvcm-3gnv12-u0jqrh-imioic-nqpoal";
+const API_PROXY = "https://script.google.com/macros/s/AKfycbwQsBDGd2U4qmwAPZLfnehYi04euNP5icmCTWxaxnZ8YMMZFCFzksCYqQBT8Ah-xyZvug/exec"; // GANTI
 
-const loadingText = document.querySelector("p");
-const table = document.getElementById("servicesTable");
-const tbody = table.querySelector("tbody");
+fetch(API_PROXY, { method: "GET" })
+    .then(res => res.json())
+    .then(data => {
+        const status = document.getElementById("status");
+        const table = document.getElementById("servicesTable");
+        const tbody = table.querySelector("tbody");
 
-fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-        api_id: API_ID,
-        api_key: API_KEY
+        if (!data.data) {
+            status.innerText = "Gagal memuat layanan (API kosong).";
+            return;
+        }
+
+        status.style.display = "none";
+        table.style.display = "table";
+
+        data.data.forEach(srv => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>${srv.id}</td>
+                    <td>${srv.name}</td>
+                    <td>${srv.category}</td>
+                    <td>${srv.price}</td>
+                    <td>${srv.min}</td>
+                    <td>${srv.max}</td>
+                    <td>${srv.description}</td>
+                </tr>
+            `;
+        });
     })
-})
-.then(res => res.json())
-.then(data => {
-
-    if (!data || !data.data) {
-        loadingText.textContent = "Gagal memuat layanan dari API.";
-        return;
-    }
-
-    loadingText.style.display = "none";
-    table.style.display = "table";
-
-    data.data.forEach(srv => {
-        tbody.innerHTML += `
-            <tr>
-                <td>${srv.id}</td>
-                <td>${srv.name}</td>
-                <td>${srv.category}</td>
-                <td>${srv.price}</td>
-                <td>${srv.min}</td>
-                <td>${srv.max}</td>
-                <td>${srv.description}</td>
-            </tr>
-        `;
+    .catch(err => {
+        document.getElementById("status").innerText = "Error fetch API.";
+        console.error(err);
     });
-})
-.catch(err => {
-    console.error(err);
-    loadingText.textContent = "Error: tidak bisa menghubungi server API.";
-});
 </script>
 
 </body>
