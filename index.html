@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Daftar Layanan</title>
+
+<style>
+    body { 
+        font-family: Arial, sans-serif; 
+        padding: 20px; 
+        background: #f8f8f8;
+    }
+    h2 {
+        margin-bottom: 10px;
+    }
+    table { 
+        width: 100%; 
+        border-collapse: collapse; 
+        margin-top: 20px; 
+        background: white;
+    }
+    th, td { 
+        border: 1px solid #ddd; 
+        padding: 10px;
+        font-size: 14px;
+    }
+    th { 
+        background: #f2f2f2; 
+        font-weight: bold;
+    }
+</style>
+</head>
+
+<body>
+
+<h2>Daftar Layanan</h2>
+<p>Sedang memuat layanan...</p>
+
+<table id="servicesTable" style="display:none;">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Layanan</th>
+            <th>Kategori</th>
+            <th>Harga</th>
+            <th>Min</th>
+            <th>Max</th>
+            <th>Deskripsi</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+// EDIT DI SINI sesuai API kamu
+const API_URL = "https://smmnusantara.id/api/services";
+const API_ID = "46340";
+const API_KEY = "rnnvcm-3gnv12-u0jqrh-imioic-nqpoal";
+
+const loadingText = document.querySelector("p");
+const table = document.getElementById("servicesTable");
+const tbody = table.querySelector("tbody");
+
+fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+        api_id: API_ID,
+        api_key: API_KEY
+    })
+})
+.then(res => res.json())
+.then(data => {
+
+    if (!data || !data.data) {
+        loadingText.textContent = "Gagal memuat layanan dari API.";
+        return;
+    }
+
+    loadingText.style.display = "none";
+    table.style.display = "table";
+
+    data.data.forEach(srv => {
+        tbody.innerHTML += `
+            <tr>
+                <td>${srv.id}</td>
+                <td>${srv.name}</td>
+                <td>${srv.category}</td>
+                <td>${srv.price}</td>
+                <td>${srv.min}</td>
+                <td>${srv.max}</td>
+                <td>${srv.description}</td>
+            </tr>
+        `;
+    });
+})
+.catch(err => {
+    console.error(err);
+    loadingText.textContent = "Error: tidak bisa menghubungi server API.";
+});
+</script>
+
+</body>
+</html>
